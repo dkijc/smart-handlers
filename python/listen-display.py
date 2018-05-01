@@ -1,3 +1,5 @@
+import serial
+from serial import serial.SerialException
 import time
 import socket
  
@@ -86,11 +88,16 @@ font = ImageFont.load_default()
 
 print('Press Ctrl-C to quit.')
 
+
+serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
+
 while True:
+    print(serial.readline())
     if draw is not None:
         del draw
 
-    #time.sleep(1.0)
+    time.sleep(1.0)
+
     # Create blank image for drawing.
     # Make sure to create image with mode '1' for 1-bit color.
     image = Image.new('1', (LCD.LCDWIDTH, LCD.LCDHEIGHT))
@@ -116,3 +123,4 @@ while True:
     draw.text((8,30), data, font=font)
     disp.image(image)
     disp.display()
+

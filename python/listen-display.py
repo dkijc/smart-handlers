@@ -2,11 +2,11 @@ import serial
 import time
 import socket
  
-UDP_IP = "127.0.0.1"
-UDP_PORT = 5005   
-sock = socket.socket(socket.AF_INET, # Internet
-                     socket.SOCK_DGRAM) # UDP
-sock.bind((UDP_IP, UDP_PORT))
+# UDP_IP = "127.0.0.1"
+# UDP_PORT = 5005   
+# sock = socket.socket(socket.AF_INET, # Internet
+#                     socket.SOCK_DGRAM) # UDP
+# sock.bind((UDP_IP, UDP_PORT))
 
 import Adafruit_Nokia_LCD as LCD
 import Adafruit_GPIO.SPI as SPI
@@ -87,15 +87,14 @@ font = ImageFont.load_default()
 
 print('Press Ctrl-C to quit.')
 
-
-serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
+ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
 
 while True:
-    print(serial.readline())
+    print(ser)
     if draw is not None:
         del draw
 
-    time.sleep(1.0)
+    #time.sleep(1.0)
 
     # Create blank image for drawing.
     # Make sure to create image with mode '1' for 1-bit color.
@@ -116,10 +115,10 @@ while True:
 
     # Load default font.
     font = ImageFont.load_default()
-    data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes
-    print "Received Message:", data
-    
-    draw.text((8,30), data, font=font)
+#    data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes
+#    print "Received Message:", data
+    print(ser.readline())    
+    draw.text((8,30), ser.readline(), font=font)
     disp.image(image)
     disp.display()
 

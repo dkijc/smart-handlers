@@ -1,5 +1,4 @@
 import serial
-from serial import serial.SerialException
 import time
 import socket
  

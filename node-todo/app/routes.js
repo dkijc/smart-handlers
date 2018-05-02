@@ -1,5 +1,10 @@
 var Todo = require('./models/todo');
 const uuid4 = require('uuid/v4');
+var PORT = 5005;
+var HOST = '127.0.0.1';
+
+var dgram = require('dgram');
+var message = new Buffer('My KungFu is Good!');
 
 var obj = {
     table: []
@@ -11,8 +16,10 @@ function getTodos(res) {
         if (err){
             console.log(err);
         } else {
-            console.log(JSON.parse(data)['table']);
-            res.json(JSON.parse(data)['table']);
+            let parsedJson = JSON.parse(data)['table'];
+            if(res) {
+                res.json(parsedJson);
+            }
         }
     });    
     // Todo.find(function (err, todos) {
@@ -52,7 +59,7 @@ module.exports = function (app) {
                     if (err) {
                         console.log("[Update Error]: " + err);
                     } else {
-                        console.log("Recieved Data: " + req.body.text)
+                        console.log("Recieved Data: " + req.body.text);
                         getTodos(res)
                     }
                 }); // write it back 
@@ -62,8 +69,15 @@ module.exports = function (app) {
                 if (err) {
                     console.log("[Write Error]: " + err);
                 } else {
-                    console.log("Recieved Data: " + req.body.text)
-                    getTodos(res)
+                    console.log("Recieved Data: " + req.body.text);
+                    getTodos(res);
+                    
+                    var client = dgram.createSocket('udp4');
+                    client.send(message, 0, message.length, PORT, HOST, function(err, bytes) {
+                        if (err) throw err;
+                        console.log('UDP message sent to ' + HOST +':'+ PORT);
+                        client.close();
+                    });
                 }
             });
         }
@@ -84,14 +98,35 @@ module.exports = function (app) {
 
     // delete a todo
     app.delete('/api/todos/:todo_id', function (req, res) {
-        Todo.remove({
-            _id: req.params.todo_id
-        }, function (err, todo) {
-            if (err)
-                res.send(err);
+        var fs = require('fs');
+        fs.readFile('todo-list.json', 'utf8', function readFileCallback(err, data){
+            if (err){
+                console.log(err);
+            } else {
+                let list = JSON.parse(data)['table'];
+                for (i in list) {
+                    if (req.params.todo_id === list[i].id) {
+                        if (i > -1) {
+                            list.splice(i, 1);
+                            obj = { 
+                                "table": list
+                            };
 
-            getTodos(res);
-        });
+                            json = JSON.stringify(obj); //convert it back to json
+
+                            fs.writeFile('todo-list.json', json, 'utf8', function (err) {
+                                if (err) {
+                                    console.log("[Update Error]: " + err);
+                                } else {
+                                    console.log("Deleted Id: " + req.params.todo_id);
+                                }
+                            }); // write it back 
+                        }
+                    }
+                }
+                getTodos(res);
+            }
+        });    
     });
 
     // application -------------------------------------------------------------

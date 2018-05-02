@@ -1,12 +1,14 @@
 import serial
 import time
 import socket
+import json
+from pprint import pprint
  
-# UDP_IP = "127.0.0.1"
-# UDP_PORT = 5005   
-# sock = socket.socket(socket.AF_INET, # Internet
-#                     socket.SOCK_DGRAM) # UDP
-# sock.bind((UDP_IP, UDP_PORT))
+UDP_IP = "127.0.0.1"
+UDP_PORT = 5005   
+sock = socket.socket(socket.AF_INET, # Internet
+                    socket.SOCK_DGRAM) # UDP
+sock.bind((UDP_IP, UDP_PORT))
 
 import Adafruit_Nokia_LCD as LCD
 import Adafruit_GPIO.SPI as SPI
@@ -104,9 +106,13 @@ while True:
     
     # Load default font.
     font = ImageFont.load_default()
-#    data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes
-#    print "Received Message:", data
-    print(ser.readline())    
-    draw.text((8,30), ser.readline(), font=font)
+    data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes
+    todos = json.load(open('../node-todo/todo-list.json'))
+
+    pprint(data)
+    print "Received Message:", data
+    #print(ser.readline())    
+    #draw.text((8,30), ser.readline(), font=font)
+    draw.text((8,30), data['table'][0]["description"], font=font)
     disp.image(image)
     disp.display()

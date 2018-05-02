@@ -72,8 +72,10 @@ module.exports = function (app) {
                     console.log("Recieved Data: " + req.body.text);
                     getTodos(res);
                     
-                    var client = dgram.createSocket('udp4');
-                    client.send(message, 0, message.length, PORT, HOST, function(err, bytes) {
+                   
+		    var client = dgram.createSocket('udp4');
+                    console.log(client);
+                    client.send(message, PORT, HOST, function(err, bytes) {
                         if (err) throw err;
                         console.log('UDP message sent to ' + HOST +':'+ PORT);
                         client.close();

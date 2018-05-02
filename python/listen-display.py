@@ -82,37 +82,37 @@ font = ImageFont.load_default()
 # Some nice fonts to try: http://www.dafont.com/bitmap.php
 # font = ImageFont.truetype('Minecraftia.ttf', 8)
 
-
+#draw.text((8,30), 'something is written', font=font)
 # Display image.
-# disp.image(image)
-# disp.display()
+disp.image(image)
+disp.display()
 
 print('Press Ctrl-C to quit.')
 
-ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
+#ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
 
 while True:
     if draw is not None:
         del draw
 
-    #time.sleep(1.0)
+#    time.sleep(1.0)
 
     # Create blank image for drawing.
     # Make sure to create image with mode '1' for 1-bit color.
-    image = Image.new('1', (LCD.LCDWIDTH, LCD.LCDHEIGHT))
+    #image = Image.new('1', (LCD.LCDWIDTH, LCD.LCDHEIGHT))
 
     # Get drawing object to draw on image.
     draw = ImageDraw.Draw(image)
     
     # Load default font.
-    font = ImageFont.load_default()
+    #font = ImageFont.load_default()
     data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes
-    todos = json.load(open('../node-todo/todo-list.json'))
+    #todos = json.load(open('../node-todo/todo-list.json'))
 
-    pprint(data)
-    print "Received Message:", data
-    #print(ser.readline())    
+    print(data)
+    #print "Received Message:", data
     #draw.text((8,30), ser.readline(), font=font)
-    draw.text((8,30), data['table'][0]["description"], font=font)
+    #draw.text((8,30), data['table'][0]["description"], font=font)
+    draw.text((8,30), 'something is written', font=font)
     disp.image(image)
     disp.display()

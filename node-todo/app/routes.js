@@ -12,25 +12,18 @@ var obj = {
 
 function getTodos(res) {
     var fs = require('fs');
-    fs.readFile('todo-list.json', 'utf8', function readFileCallback(err, data){
-        if (err){
-            console.log(err);
-        } else {
-            let parsedJson = JSON.parse(data)['table'];
-            if(res) {
-                res.json(parsedJson);
+    if (fs.existsSync('todo-list.json')) {
+        fs.readFile('todo-list.json', 'utf8', function readFileCallback(err, data){
+            if (err){
+                console.log(err);
+            } else {
+                let parsedJson = JSON.parse(data)['table'];
+                if(res) {
+                    res.json(parsedJson);
+                }
             }
-        }
-    });    
-    // Todo.find(function (err, todos) {
-
-    //     // if there is an error retrieving, send the error. nothing after res.send(err) will execute
-    //     if (err) {
-    //         res.send(err);
-    //     }
-
-    //     res.json(todos); // return all todos in JSON format
-    // });
+        });    
+    }
 };
 
 module.exports = function (app) {
@@ -60,7 +53,13 @@ module.exports = function (app) {
                         console.log("[Update Error]: " + err);
                     } else {
                         console.log("Recieved Data: " + req.body.text);
-                        getTodos(res)
+                        getTodos(res);
+                        var client = dgram.createSocket('udp4');
+                        client.send(message,PORT, HOST, function(err) {
+                            if (err) throw err;
+                            console.log('UDP message sent to ' + HOST +':'+ PORT);
+                            client.close();
+                        });
                     }
                 }); // write it back 
             }});    
@@ -72,10 +71,8 @@ module.exports = function (app) {
                     console.log("Recieved Data: " + req.body.text);
                     getTodos(res);
                     
-                   
-		    var client = dgram.createSocket('udp4');
-                    console.log(client);
-                    client.send(message, PORT, HOST, function(err, bytes) {
+                    var client = dgram.createSocket('udp4');
+                    client.send(message,PORT, HOST, function(err) {
                         if (err) throw err;
                         console.log('UDP message sent to ' + HOST +':'+ PORT);
                         client.close();
@@ -83,19 +80,6 @@ module.exports = function (app) {
                 }
             });
         }
-
-        // // create a todo, information comes from AJAX request from Angular
-        // Todo.create({
-        //     text: req.body.text,
-        //     done: false
-        // }, function (err, todo) {
-        //     if (err)
-        //         res.send(err);
-
-        //     // get and return all the todos after you create another
-        //     getTodos(res);
-        // });
-
     });
 
     // delete a todo

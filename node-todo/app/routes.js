@@ -1,19 +1,32 @@
 var Todo = require('./models/todo');
+const uuid4 = require('uuid/v4');
+
+var obj = {
+    table: []
+ };
 
 function getTodos(res) {
-    Todo.find(function (err, todos) {
-
-        // if there is an error retrieving, send the error. nothing after res.send(err) will execute
-        if (err) {
-            res.send(err);
+    var fs = require('fs');
+    fs.readFile('todo-list.json', 'utf8', function readFileCallback(err, data){
+        if (err){
+            console.log(err);
+        } else {
+            console.log(JSON.parse(data)['table']);
+            res.json(JSON.parse(data)['table']);
         }
+    });    
+    // Todo.find(function (err, todos) {
 
-        res.json(todos); // return all todos in JSON format
-    });
+    //     // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+    //     if (err) {
+    //         res.send(err);
+    //     }
+
+    //     res.json(todos); // return all todos in JSON format
+    // });
 };
 
 module.exports = function (app) {
-
     // api ---------------------------------------------------------------------
     // get all todos
     app.get('/api/todos', function (req, res) {
@@ -23,18 +36,49 @@ module.exports = function (app) {
 
     // create todo and send back all todos after creation
     app.post('/api/todos', function (req, res) {
+        obj.table.push({id: uuid4(), description:req.body.text});
+        var json = JSON.stringify(obj);
+        var fs = require('fs');
+        
+        if (fs.existsSync('todo-list.json')) {
+            fs.readFile('todo-list.json', 'utf8', function readFileCallback(err, data){
+                if (err){
+                    console.log(err);
+                } else {
+                obj = JSON.parse(data); //now it an object
+                obj.table.push({id: uuid4(), description: req.body.text}); //add some data
+                json = JSON.stringify(obj); //convert it back to json
+                fs.writeFile('todo-list.json', json, 'utf8', function (err) {
+                    if (err) {
+                        console.log("[Update Error]: " + err);
+                    } else {
+                        console.log("Recieved Data: " + req.body.text)
+                        getTodos(res)
+                    }
+                }); // write it back 
+            }});    
+        } else {
+            fs.writeFile('todo-list.json', json, 'utf8', function (err) {
+                if (err) {
+                    console.log("[Write Error]: " + err);
+                } else {
+                    console.log("Recieved Data: " + req.body.text)
+                    getTodos(res)
+                }
+            });
+        }
 
-        // create a todo, information comes from AJAX request from Angular
-        Todo.create({
-            text: req.body.text,
-            done: false
-        }, function (err, todo) {
-            if (err)
-                res.send(err);
+        // // create a todo, information comes from AJAX request from Angular
+        // Todo.create({
+        //     text: req.body.text,
+        //     done: false
+        // }, function (err, todo) {
+        //     if (err)
+        //         res.send(err);
 
-            // get and return all the todos after you create another
-            getTodos(res);
-        });
+        //     // get and return all the todos after you create another
+        //     getTodos(res);
+        // });
 
     });
 

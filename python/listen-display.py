@@ -113,6 +113,6 @@ while True:
     #print "Received Message:", data
     #draw.text((8,30), ser.readline(), font=font)
     #draw.text((8,30), data['table'][0]["description"], font=font)
-    draw.text((8,30), 'something is written', font=font)
+    draw.text((8,30), data, font=font)
     disp.image(image)
     disp.display()

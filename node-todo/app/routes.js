@@ -4,7 +4,6 @@ var PORT = 5005;
 var HOST = '127.0.0.1';
 
 var dgram = require('dgram');
-var message = new Buffer('My KungFu is Good!');
 
 var obj = {
     table: []
@@ -55,6 +54,8 @@ module.exports = function (app) {
                         console.log("Recieved Data: " + req.body.text);
                         getTodos(res);
                         var client = dgram.createSocket('udp4');
+                        var message = new Buffer(req.body.text);
+
                         client.send(message,PORT, HOST, function(err) {
                             if (err) throw err;
                             console.log('UDP message sent to ' + HOST +':'+ PORT);
@@ -72,6 +73,8 @@ module.exports = function (app) {
                     getTodos(res);
                     
                     var client = dgram.createSocket('udp4');
+                    var message = new Buffer(req.body.text);
+
                     client.send(message,PORT, HOST, function(err) {
                         if (err) throw err;
                         console.log('UDP message sent to ' + HOST +':'+ PORT);

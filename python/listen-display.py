@@ -49,8 +49,9 @@ draw.rectangle((0,0,LCD.LCDWIDTH,LCD.LCDHEIGHT), outline=255, fill=255)
 
 # Draw some shapes.
 draw.ellipse((2,2,20,20), outline=0, fill=255)
-draw.rectangle((8,9,27,13), outline=0, fill=0)
-
+draw.rectangle((8,9,25,13), outline=0, fill=255)
+draw.rectangle((8,14,25,14), outline=0, fill=255)
+draw.rectangle((0,24,LCD.LCDWIDTH-1,46), outline=0, fill=255)
 # Load default font.
 font = ImageFont.load_default()
 
@@ -70,13 +71,23 @@ print('Press Ctrl-C to quit.')
 
 while True:
     #time.sleep(1.0)
-
+    # draw.rectangle((8,9,13,27), outline=0, fill=0)
     data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes
+    # draw.ellipse((2,2,20,20), outline=0, fill=255)
+    # draw.rectangle((8,9,27,13), outline=0, fill=255)
 
-    print(data, "something has received")
+    d = json.load(open('../node-todo/todo-list.json'))
 
-    draw.rectangle((0,21,LCD.LCDWIDTH-1,43), outline=0, fill=255)
-    draw.multiline_text((2,21), data, font=font)
+    draw.rectangle((0,24,LCD.LCDWIDTH-1,46), outline=0, fill=255)
+    h=24
+    i = 0
+    for item in d["table"]:
+        if i is 2:
+            break;
+        draw.multiline_text((2,h), item["description"], font=font)
+        h = h + 10
+        i=i+1
+    # draw.multiline_text((2,21), d["table"][1]["description"], font=font)
     disp.image(image)
     disp.display()
     

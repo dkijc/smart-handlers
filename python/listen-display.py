@@ -72,7 +72,7 @@ ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
 while True:
     #time.sleep(1.0)
     # draw.rectangle((8,9,13,27), outline=0, fill=0)
-#    data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes
+    # data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes
     # draw.ellipse((2,2,20,20), outline=0, fill=255)
     # draw.rectangle((8,9,27,13), outline=0, fill=255)
     print(ser.readline())
@@ -92,4 +92,4 @@ while True:
         # draw.multiline_text((2,21), d["table"][1]["description"], font=font)
         disp.image(image)
         disp.display()
-    
+   

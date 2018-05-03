@@ -107,13 +107,21 @@ module.exports = function (app) {
                                 if (err) {
                                     console.log("[Update Error]: " + err);
                                 } else {
+                                    getTodos(res);
                                     console.log("Deleted Id: " + req.params.todo_id);
+                                    var client = dgram.createSocket('udp4');
+                                    var message = new Buffer(req.params.todo_id);
+                                    
+                                    client.send(message,PORT, HOST, function(err) {
+                                        if (err) throw err;
+                                        console.log('UDP message sent to ' + HOST +':'+ PORT);
+                                        client.close();
+                                    });
                                 }
                             }); // write it back 
                         }
                     }
                 }
-                getTodos(res);
             }
         });    
     });

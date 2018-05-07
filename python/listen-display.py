@@ -4,11 +4,11 @@ import socket
 import json
 from pprint import pprint
  
-#UDP_IP = "127.0.0.1"
-#UDP_PORT = 5005   
-#sock = socket.socket(socket.AF_INET, # Internet
+# UDP_IP = "127.0.0.1"
+# UDP_PORT = 5005   
+# sock = socket.socket(socket.AF_INET, # Internet
 #                   socket.SOCK_DGRAM) # UDP
-#sock.bind((UDP_IP, UDP_PORT))
+# sock.bind((UDP_IP, UDP_PORT))
 
 import Adafruit_Nokia_LCD as LCD
 import Adafruit_GPIO.SPI as SPI
@@ -71,13 +71,14 @@ ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
 
 while True:
     #time.sleep(1.0)
-    # draw.rectangle((8,9,13,27), outline=0, fill=0)
-    # data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes
-    # draw.ellipse((2,2,20,20), outline=0, fill=255)
-    # draw.rectangle((8,9,27,13), outline=0, fill=255)
-    print(ser.readline())
+    # draw.rectangle((8,9,13,27), outline=0, fill=0) 
+    # sock.settimeout(1.0)
+    # try:
+        # data, addr = sock.recvfrom(1024)# buffer size is 1024 bytes
+    # except sock.timeout:    
+        # draw.ellipse((2,2,20,20), outline=0, fill=255)
+        # draw.rectangle((8,9,27,13), outline=0, fill=255)
     if ser.readline() != "":
-        print("in the if statement")
         d = json.load(open('../node-todo/todo-list.json'))
 
         draw.rectangle((0,24,LCD.LCDWIDTH-1,46), outline=0, fill=255)
@@ -86,6 +87,7 @@ while True:
         for item in d["table"]:
             if i is 2:
                 break;
+            print(draw.textsize(item["description"]))
             draw.multiline_text((2,h), item["description"], font=font)
             h = h + 10
             i=i+1

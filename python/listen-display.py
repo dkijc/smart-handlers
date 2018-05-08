@@ -72,6 +72,9 @@ print('Press Ctrl-C to quit.')
 
 ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
 
+prevVal = 0
+prevIndex = 0
+
 while True:
     #time.sleep(1.0)
     # draw.rectangle((8,9,13,27), outline=0, fill=0) 
@@ -81,20 +84,72 @@ while True:
     # except sock.timeout:    
         # draw.ellipse((2,2,20,20), outline=0, fill=255)
         # draw.rectangle((8,9,27,13), outline=0, fill=255)
-    if ser.readline() != "":
-        d = json.load(open(path))
+    while True:
 
-        draw.rectangle((0,24,LCD.LCDWIDTH-1,46), outline=0, fill=255)
-        h=24
-        i = 0
-        for item in d["table"]:
-            if i is 2:
-                break;
-            print(draw.textsize(item["description"]))
-            draw.multiline_text((2,h), item["description"], font=font)
-            h = h + 10
-            i=i+1
-        # draw.multiline_text((2,21), d["table"][1]["description"], font=font)
-        disp.image(image)
-        disp.display()
-   
+        incoming = ser.readline() 
+        if len(incoming) != 0:
+            if incoming[0] == "b":
+                with open(path, 'w') as outfile:
+                    data = {}
+                    data['table'] = [] 
+                    json.dump(data , outfile)
+
+                prevVal = 0
+                prevIndex = 0
+                draw.rectangle((0,24,LCD.LCDWIDTH-1,46), outline=0, fill=255)
+                disp.image(image)
+                disp.display()
+                break
+            elif incoming[0] == 'c':     
+                prevVal = 0
+                prevIndex = 0
+                d = json.load(open(path))
+                
+                draw.rectangle((0,24,LCD.LCDWIDTH-1,46), outline=0, fill=255)
+                h=24
+                i = 0
+                for item in d["table"]:
+                    if i is 1:
+                        break;
+                    # print(draw.textsize(item["description"]))
+                    draw.text((2,h), item["description"], font=font)
+                    h = h + 10
+                    i=i+1
+                    draw.text((2,h), str(len(d["table"]) - 1) + " items left", font=font)
+                # draw.multiline_text((2,21), d["table"][1]["description"], font=font)
+                disp.image(image)
+                disp.display()
+            else:
+                d = json.load(open(path))
+                h=24
+                encoderVal = int(incoming[:-2])
+                print(encoderVal)
+                if encoderVal > prevVal:
+                    prevIndex = prevIndex + 1
+                    if len(d["table"]) > prevIndex:
+                        draw.rectangle((0,24,LCD.LCDWIDTH-1,46), outline=0, fill=255)
+                        draw.text((2,h), d["table"][prevIndex]["description"], font=font)
+                        h = h + 10
+                        draw.text((2,h), str(len(d["table"]) - 1 - prevIndex) + " items left", font=font)
+                        disp.image(image)
+                        disp.display()
+                    break;
+                # elif encoderVal < prevVal:
+                #     prevIndex = prevIndex - 1
+                #     if len(d["table"]) > prevIndex:
+
+
+
+            # else:
+            #     if int(incoming[1:]) > prevVal:
+                # draw.rectangle((1,25,LCD.LCDWIDTH-1,35), outline=0, fill=0)
+                # if int(incoming[1:]) > prevVal:
+                #     draw.rectangle((1,25,LCD.LCDWIDTH-1,35), outline=0, fill=255)
+                #     draw.rectangle((1,36,LCD.LCDWIDTH-1,46), outline=0, fill=0)
+                #     disp.image(image)
+                #     disp.display()
+                # else: 
+                #     draw.text((1,25), incoming, font=font,fill=255)
+                #     disp.image(image)
+                #     disp.display()
+

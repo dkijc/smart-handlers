@@ -2,8 +2,11 @@ import serial
 import time
 import socket
 import json
-from pprint import pprint
- 
+import os.path
+
+my_path = os.path.abspath(os.path.dirname(__file__))
+path = os.path.join(my_path, "../node-todo/todo-list.json") 
+
 # UDP_IP = "127.0.0.1"
 # UDP_PORT = 5005   
 # sock = socket.socket(socket.AF_INET, # Internet
@@ -79,7 +82,7 @@ while True:
         # draw.ellipse((2,2,20,20), outline=0, fill=255)
         # draw.rectangle((8,9,27,13), outline=0, fill=255)
     if ser.readline() != "":
-        d = json.load(open('../node-todo/todo-list.json'))
+        d = json.load(open(path))
 
         draw.rectangle((0,24,LCD.LCDWIDTH-1,46), outline=0, fill=255)
         h=24

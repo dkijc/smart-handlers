@@ -1,5 +1,11 @@
-**Smart-Handlers**
+# Smart-Handlers
 *Minsu Kang, Michael Sheinfeld, Daniel Kim*
+
+This repo holds the contents of the greatest invention of the 22nd century.
+
+Welcome to the future! Smart-Handlers will change the way you take out your trash, they way you communicate to your family, and the way you live.
+
+Please feel free to lurk around and be enlightened :)
 
 ## Contents
 

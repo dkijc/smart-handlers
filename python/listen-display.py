@@ -76,22 +76,48 @@ prevVal = 0
 prevIndex = 0
 startTime = 0
 endTime = 0
+deletable = False
 while True:
     while True:
         incoming = ser.readline() 
         if len(incoming) != 0:
             if incoming[0] == "b":
-                startTime = time.time()
-                with open(path, 'w') as outfile:
-                    data = {}
-                    data['table'] = [] 
-                    json.dump(data , outfile)
+                if not deletable:
+                    prevVal = 0
+                    prevIndex = 0
+                    d = json.load(open(path))
+                    
+                    draw.rectangle((0,24,LCD.LCDWIDTH-1,46), outline=0, fill=255)
+                    h=24
+                    i = 0
+                    for item in d["table"]:
+                        if i is 1:
+                            break;
+                        # print(draw.textsize(item["description"]))
+                        draw.text((2,h), item["description"], font=font)
+                        h = h + 10
+                        i=i+1
+                        draw.text((2,h), str(len(d["table"])) + " todo(s)", font=font)
+                    # draw.multiline_text((2,21), d["table"][1]["description"], font=font)
+                    disp.image(image)
+                    disp.display()
+                    startTime = time.time()
+                    
+                    deletable = True
+                
+                else:
+                    with open(path, 'w') as outfile:
+                        data = {}
+                        data['table'] = [] 
+                        json.dump(data , outfile)
 
-                prevVal = 0
-                prevIndex = 0
-                draw.rectangle((0,24,LCD.LCDWIDTH-1,46), outline=0, fill=255)
-                disp.image(image)
-                disp.display()
+                    prevVal = 0
+                    prevIndex = 0
+                    draw.rectangle((0,24,LCD.LCDWIDTH-1,46), outline=0, fill=255)
+                    disp.image(image)
+                    disp.display()
+                break
+            
             elif incoming[0] == 'c':   
                 startTime = time.time()  
                 prevVal = 0
@@ -110,8 +136,11 @@ while True:
                     i=i+1
                     draw.text((2,h), str(len(d["table"])) + " todo(s)", font=font)
                 # draw.multiline_text((2,21), d["table"][1]["description"], font=font)
+                deletable = True
+
                 disp.image(image)
                 disp.display()
+                break
             else:
                 startTime = time.time()
                 d = json.load(open(path))
@@ -140,6 +169,9 @@ while True:
                         h = h + 10
                         # draw.text((2,h), str(len(d["table"]) - 1 - prevIndex) + " items left", font=font)
                         draw.text((2,h), str(len(d["table"])) + " todo(s)", font=font)
+
+                        deletable = True
+
                         disp.image(image)
                         disp.display()                   
 
@@ -155,9 +187,13 @@ while True:
                         h = h + 10
                         # draw.text((2,h), str(len(d["table"]) - 1 - prevIndex) + " items left", font=font)
                         draw.text((2,h), str(len(d["table"])) + " todo(s)", font=font)
+
+                        deletable = True
+
                         disp.image(image)
                         disp.display()
 
+                break
 
 
 
@@ -176,9 +212,9 @@ while True:
 
         endTime = time.time()
 
-        if endTime - startTime > 10.0:
+        if endTime - startTime > 5.0:
+            deletable = False
             draw.rectangle((0,24,LCD.LCDWIDTH-1,46), outline=0, fill=255)
-        
             disp.image(image)
             disp.display()      
 

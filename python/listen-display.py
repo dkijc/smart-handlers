@@ -74,21 +74,14 @@ ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
 
 prevVal = 0
 prevIndex = 0
-
+startTime = 0
+endTime = 0
 while True:
-    #time.sleep(1.0)
-    # draw.rectangle((8,9,13,27), outline=0, fill=0) 
-    # sock.settimeout(1.0)
-    # try:
-        # data, addr = sock.recvfrom(1024)# buffer size is 1024 bytes
-    # except sock.timeout:    
-        # draw.ellipse((2,2,20,20), outline=0, fill=255)
-        # draw.rectangle((8,9,27,13), outline=0, fill=255)
     while True:
-
         incoming = ser.readline() 
         if len(incoming) != 0:
             if incoming[0] == "b":
+                startTime = time.time()
                 with open(path, 'w') as outfile:
                     data = {}
                     data['table'] = [] 
@@ -99,8 +92,8 @@ while True:
                 draw.rectangle((0,24,LCD.LCDWIDTH-1,46), outline=0, fill=255)
                 disp.image(image)
                 disp.display()
-                break
-            elif incoming[0] == 'c':     
+            elif incoming[0] == 'c':   
+                startTime = time.time()  
                 prevVal = 0
                 prevIndex = 0
                 d = json.load(open(path))
@@ -115,28 +108,56 @@ while True:
                     draw.text((2,h), item["description"], font=font)
                     h = h + 10
                     i=i+1
-                    draw.text((2,h), str(len(d["table"]) - 1) + " items left", font=font)
+                    draw.text((2,h), str(len(d["table"])) + " todo(s)", font=font)
                 # draw.multiline_text((2,21), d["table"][1]["description"], font=font)
                 disp.image(image)
                 disp.display()
             else:
+                startTime = time.time()
                 d = json.load(open(path))
+                if len(d["table"]) == 0:
+                    break
+                
                 h=24
                 encoderVal = int(incoming[:-2])
-                print(encoderVal)
+                if encoderVal == 16383 and prevVal == 0:
+                    prevVal = 16384
+                 
+                # print("current: " + str(encoderVal))
+                # print("prev: " + str(prevVal))
+
                 if encoderVal > prevVal:
                     prevIndex = prevIndex + 1
+                    prevVal = encoderVal
+                    # print("prevIndex: " + str(prevIndex))
+                    if prevIndex > len(d["table"]):
+                        prevIndex = len(d["table"]) - 1
+                    
+                    # print("prevIndex: " + str(prevIndex))
                     if len(d["table"]) > prevIndex:
                         draw.rectangle((0,24,LCD.LCDWIDTH-1,46), outline=0, fill=255)
                         draw.text((2,h), d["table"][prevIndex]["description"], font=font)
                         h = h + 10
-                        draw.text((2,h), str(len(d["table"]) - 1 - prevIndex) + " items left", font=font)
+                        # draw.text((2,h), str(len(d["table"]) - 1 - prevIndex) + " items left", font=font)
+                        draw.text((2,h), str(len(d["table"])) + " todo(s)", font=font)
+                        disp.image(image)
+                        disp.display()                   
+
+                elif encoderVal < prevVal:
+                    prevIndex = prevIndex - 1
+                    prevVal = encoderVal
+                    if prevIndex < 0:
+                        prevIndex = 0
+                    # print("prevIndex: " + str(prevIndex))
+                    if len(d["table"]) >= prevIndex:
+                        draw.rectangle((0,24,LCD.LCDWIDTH-1,46), outline=0, fill=255)
+                        draw.text((2,h), d["table"][prevIndex]["description"], font=font)
+                        h = h + 10
+                        # draw.text((2,h), str(len(d["table"]) - 1 - prevIndex) + " items left", font=font)
+                        draw.text((2,h), str(len(d["table"])) + " todo(s)", font=font)
                         disp.image(image)
                         disp.display()
-                    break;
-                # elif encoderVal < prevVal:
-                #     prevIndex = prevIndex - 1
-                #     if len(d["table"]) > prevIndex:
+
 
 
 
@@ -152,4 +173,12 @@ while True:
                 #     draw.text((1,25), incoming, font=font,fill=255)
                 #     disp.image(image)
                 #     disp.display()
+
+        endTime = time.time()
+
+        if endTime - startTime > 10.0:
+            draw.rectangle((0,24,LCD.LCDWIDTH-1,46), outline=0, fill=255)
+        
+            disp.image(image)
+            disp.display()      
 

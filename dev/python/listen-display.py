@@ -148,26 +148,20 @@ while True:
                 if encoderVal == 16383 and prevVal == 0:
                     prevVal = 16384
                  
-                # print("current: " + str(encoderVal))
-                # print("prev: " + str(prevVal))
-
                 if encoderVal > prevVal:
                     prevIndex = prevIndex + 1
                     prevVal = encoderVal
                     # print("prevIndex: " + str(prevIndex))
-                    if prevIndex > len(d["table"]):
+                    if prevIndex == len(d["table"]):
                         prevIndex = len(d["table"]) - 1
-                    
-                    # print("prevIndex: " + str(prevIndex))
                     if len(d["table"]) > prevIndex:
                         draw.rectangle((0,24,LCD.LCDWIDTH-1,46), outline=0, fill=255)
                         draw.text((2,h), d["table"][prevIndex]["description"], font=font)
                         h = h + 10
                         # draw.text((2,h), str(len(d["table"]) - 1 - prevIndex) + " items left", font=font)
-                        draw.text((2,h), str(len(d["table"])) + " todo(s)", font=font)
+                        draw.text((2,h), str(prevIndex + 1) + '/' + str(len(d["table"])) + " todo(s)", font=font)
 
                         deletable = True
-
                         disp.image(image)
                         disp.display()                   
 
@@ -176,16 +170,13 @@ while True:
                     prevVal = encoderVal
                     if prevIndex < 0:
                         prevIndex = 0
-                    # print("prevIndex: " + str(prevIndex))
                     if len(d["table"]) >= prevIndex:
                         draw.rectangle((0,24,LCD.LCDWIDTH-1,46), outline=0, fill=255)
                         draw.text((2,h), d["table"][prevIndex]["description"], font=font)
                         h = h + 10
-                        # draw.text((2,h), str(len(d["table"]) - 1 - prevIndex) + " items left", font=font)
-                        draw.text((2,h), str(len(d["table"])) + " todo(s)", font=font)
+                        draw.text((2,h), str(prevIndex + 1) + '/' + str(len(d["table"])) + " todo(s)", font=font)
 
                         deletable = True
-
                         disp.image(image)
                         disp.display()
 

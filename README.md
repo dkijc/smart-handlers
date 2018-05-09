@@ -9,6 +9,9 @@ Please feel free to lurk around and be enlightened :)
 
 ## Contents
 
+### Documentation
+- [Resources (verplank diagram, state diagram, and origin of our idea)](doc)
+
 ### Development 
 - [Python Code](dev/python)
 - [Node Code](dev/node-todo)

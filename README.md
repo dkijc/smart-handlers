@@ -9,6 +9,5 @@
 - [Arduino Code](dev/arduino)
 
 ### Hardware
-- [Python Code](dev/python)
-- [Node Code](dev/node-todo)
-- [Arduino Code](dev/arduino)
+- [3D Print Designs](designs)
+- [Laser Cut Designs](designs)

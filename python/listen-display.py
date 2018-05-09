@@ -58,10 +58,6 @@ draw.rectangle((0,24,LCD.LCDWIDTH-1,46), outline=0, fill=255)
 # Load default font.
 font = ImageFont.load_default()
 
-# Alternatively load a TTF font.
-# Some nice fonts to try: http://www.dafont.com/bitmap.php
-# font = ImageFont.truetype('Minecraftia.ttf', 12)
- # font = ImageFont.truetype('Minecraftia.ttf', 12)
 draw.text((30,0), 'Smart', font=font)
 draw.text((30,10), 'Handlers', font=font)
 # Display image.
@@ -194,21 +190,6 @@ while True:
                         disp.display()
 
                 break
-
-
-
-            # else:
-            #     if int(incoming[1:]) > prevVal:
-                # draw.rectangle((1,25,LCD.LCDWIDTH-1,35), outline=0, fill=0)
-                # if int(incoming[1:]) > prevVal:
-                #     draw.rectangle((1,25,LCD.LCDWIDTH-1,35), outline=0, fill=255)
-                #     draw.rectangle((1,36,LCD.LCDWIDTH-1,46), outline=0, fill=0)
-                #     disp.image(image)
-                #     disp.display()
-                # else: 
-                #     draw.text((1,25), incoming, font=font,fill=255)
-                #     disp.image(image)
-                #     disp.display()
 
         endTime = time.time()
 
